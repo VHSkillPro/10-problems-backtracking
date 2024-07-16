@@ -16,7 +16,7 @@ int main() {
     for (int i = n - 1; i >= 0; --i)
         suff[i] = suff[i + 1] + s[i];
 
-    ll ans = 0, cnt = 0;
+    vector<int> ans;
     function<void(int, int, int)> backtrack = [&](int i, int sum, int state) {
         for (int c = 0; c < 2; ++c) {
             int next_sum = sum + c * s[i];
@@ -24,16 +24,18 @@ int main() {
             if (next_sum > T || next_sum + suff[i + 1] < T) continue;
             
             if (i == n - 1) {
-                if (next_sum == T) {
-                    ans += next_state;
-                    ++cnt;
-                }
+                if (next_sum == T) 
+                    ans.push_back(next_state);
             }
             else backtrack(i + 1, next_sum, next_state);
         }
     };
     backtrack(0, 0, 0);
 
-    cout << cnt << " " << ans << "\n";
+    sort(ans.begin(), ans.end());
+    cout << ans.size() << "\n";
+    for (int state: ans)
+        cout << state << "\n";
+        
     return 0;
 }
