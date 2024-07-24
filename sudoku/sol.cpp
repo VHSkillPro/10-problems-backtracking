@@ -2,58 +2,60 @@
 using namespace std;
 
 void solveSudoku(vector<vector<char>>& board) {
-        vector<vector<char>> ans;
-        vector<vector<int>> row(9, vector<int>(10, false));
-        vector<vector<int>> col(9, vector<int>(10, false));
-        vector<vector<int>> square(9, vector<int>(10, false));
-        vector<pair<int, int>> cells;
+    vector<vector<char>> ans;
+    vector<vector<bool>> row(9, vector<bool>(10, false));
+    vector<vector<bool>> col(9, vector<bool>(10, false));
+    vector<vector<bool>> square(9, vector<bool>(10, false));
+    vector<pair<int, int>> cells;
 
-        for (int i = 0; i < 9; ++i)
-            for (int j = 0; j < 9; ++j) 
-                if (board[i][j] == '.') {
-                    cells.push_back({i, j});
-                }
-                else {
-                    int c = board[i][j] - '0';
+    for (int i = 0; i < 9; ++i)
+        for (int j = 0; j < 9; ++j) 
+            if (board[i][j] != '.') {
+                int c = board[i][j] - '0';
 
-                    row[i][c] = true;
-                    col[j][c] = true;
+                row[i][c] = true;
+                col[j][c] = true;
 
-                    int s_row = i / 3;
-                    int s_col = j / 3;
-                    square[s_row * 3 + s_col][c] = true;
-                }
-        
-        bool haveAns = false;
-        function<void(int)> backtrack = [&](int i) {
-            if (haveAns) return ;
-
-            if (i == cells.size()) {
-                haveAns = true;
-                ans = board;
-                return ;
+                int s_row = i / 3;
+                int s_col = j / 3;
+                square[s_row * 3 + s_col][c] = true;
             }
+    
+    for (int i = 0; i < 9; ++i)
+        for (int j = 0; j < 9; ++j) 
+            if (board[i][j] == '.') 
+                cells.push_back({i, j});
 
-            int r = cells[i].first;
-            int c = cells[i].second;
-            int s = (r / 3) * 3 + c / 3;
+    bool haveAns = false;
+    function<void(int)> backtrack = [&](int i) {
+        if (haveAns) return ;
 
-            for (int d = 1; d <= 9; ++d) {
-                if (row[r][d] || col[c][d] || square[s][d]) continue;
-                
-                board[r][c] = char(d + '0');
-                row[r][d] = col[c][d] = square[s][d] = true;
+        if (i == cells.size()) {
+            haveAns = true;
+            ans = board;
+            return ;
+        }
 
-                backtrack(i + 1);
+        int r = cells[i].first;
+        int c = cells[i].second;
+        int s = (r / 3) * 3 + c / 3;
 
-                board[r][c] = '.';
-                row[r][d] = col[c][d] = square[s][d] = false;
-            }
-        };
-        backtrack(0);
+        for (int d = 1; d <= 9; ++d) {
+            if (row[r][d] || col[c][d] || square[s][d]) continue;
+            
+            board[r][c] = char(d + '0');
+            row[r][d] = col[c][d] = square[s][d] = true;
 
-        board = ans;
-    }
+            backtrack(i + 1);
+
+            board[r][c] = '.';
+            row[r][d] = col[c][d] = square[s][d] = false;
+        }
+    };
+    backtrack(0);
+
+    board = ans;
+}
 
 int main(int argc, char* argv[]) {
     ios_base::sync_with_stdio(false);
