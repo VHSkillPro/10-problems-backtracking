@@ -1,2 +1,4 @@
 *.Identifier
-ignore/
+*.zip
+*.tar.gz
+*.rar
